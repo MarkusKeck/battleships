@@ -1,11 +1,10 @@
 package com.example.battleships.controller;
 
-import com.example.battleships.dto.ShipDto;
 import com.example.battleships.dto.CoordinatesDto;
+import com.example.battleships.dto.ShipDto;
 import com.example.battleships.entity.Coordinates;
 import com.example.battleships.entity.Game;
 import com.example.battleships.entity.Ship;
-import com.example.battleships.entity.Turn;
 import com.example.battleships.service.GameService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
