@@ -74,7 +74,7 @@ public final class ValidationService {
     }
 
     public Boolean hasShipEnoughClearance(Ship ship, Set<Ship> ships) {
-        final Set<Coordinates> SHIP_CLEARANCE_COORDINATES = shipService.getShipAndSurroundingCoordinates(ship);
+        final Set<Coordinates> SHIP_CLEARANCE_COORDINATES = shipService.getClearanceCoordinatesForShip(ship);
         final Set<Coordinates> OTHER_SHIPS_COORDINATES = ships.stream().map(shipService::getAllCoordinatesFromShip).flatMap(Collection::stream).collect(Collectors.toSet());
 
         return Collections.disjoint(SHIP_CLEARANCE_COORDINATES, OTHER_SHIPS_COORDINATES);

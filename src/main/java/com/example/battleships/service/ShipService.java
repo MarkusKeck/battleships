@@ -16,6 +16,14 @@ import java.util.Set;
 @RequiredArgsConstructor
 public final class ShipService {
 
+    /**
+     * Finds all coordinates for the given ship
+     *
+     * @param ship - The ship for which all coordinates should be calculated
+     *
+     * @return All coordinates of the given ship
+     */
+
     public Set<Coordinates> getAllCoordinatesFromShip(Ship ship) {
         final Set<Coordinates> coordinates = new HashSet<>();
 
@@ -32,7 +40,16 @@ public final class ShipService {
         return coordinates;
     }
 
-    public Set<Coordinates> getShipAndSurroundingCoordinates(Ship ship) {
+
+    /**
+     * Gets all clearance coordinates for ship in which no other ships are allowed
+     *
+     * @param ship  - The ship the coordinates should be calculated for
+     *
+     * @return All clearance coordinates for the ship
+     */
+
+    public Set<Coordinates> getClearanceCoordinatesForShip(Ship ship) {
         final Set<Coordinates> surroundingCoordinates = new HashSet<>();
 
         for (Coordinates shipCoordinate : this.getAllCoordinatesFromShip(ship)) {
@@ -45,7 +62,19 @@ public final class ShipService {
         return surroundingCoordinates;
     }
 
-    public Ship getShipFromCoordinatesAndPlayer(Coordinates coordinates, Game game, Player player) {
+
+    /**
+     * Gets the ship of the given player which coordinates also contain the provided one
+     * If no ship gets found null will be returned
+     *
+     * @param coordinates   - The coordinate a ship gets looked for
+     * @param game          - The current game
+     * @param player        - The player on which side we look for a ship
+     *
+     * @return If a ship gets found it will be returned otherwise null
+     */
+
+    public Ship getShipFromPlayerAndCoordinates(Coordinates coordinates, Game game, Player player) {
         final Field FIELD = player.equals(Player.PLAYER_ONE) ? game.getFieldPlayerOne() : game.getFieldPlayerTwo();
 
         for (Ship ship : FIELD.getShips()) {

@@ -98,7 +98,7 @@ public final class GameService {
             return null;
 
         // allow shooting - if hit get ship
-        final Ship ship = shipService.getShipFromCoordinatesAndPlayer(coordinates, game, SHOOTING_AT_PLAYER);
+        final Ship ship = shipService.getShipFromPlayerAndCoordinates(coordinates, game, SHOOTING_AT_PLAYER);
 
         final Turn HUMAN_TURN = new Turn(null, game.getTurns().size() + 1, SHOOTING_PLAYER, coordinates, ship != null);
         game.getTurns().add(HUMAN_TURN);
@@ -118,7 +118,7 @@ public final class GameService {
         boolean hasKiHit;
         do {
             final Coordinates KI_SHOOT_AT_COORDINATES = kiService.shoot(game);
-            Ship kiShip = shipService.getShipFromCoordinatesAndPlayer(KI_SHOOT_AT_COORDINATES, game, Player.PLAYER_ONE);
+            Ship kiShip = shipService.getShipFromPlayerAndCoordinates(KI_SHOOT_AT_COORDINATES, game, Player.PLAYER_ONE);
 
             final Turn KI_TURN = new Turn(null, game.getTurns().size() + 1, Player.PLAYER_TWO, KI_SHOOT_AT_COORDINATES, kiShip != null);
             game.getTurns().add(KI_TURN);
