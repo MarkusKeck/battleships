@@ -20,6 +20,15 @@ public final class ValidationService {
 
     private final ShipService shipService;
 
+
+    /**
+     * Validates if the player has set the correct amount of ships for each ShipType
+     *
+     * @param ships - All ships the player has placed
+     *
+     * @return When all placed ships with their ShipType match the expected amount ture, otherwise false
+     */
+
     public Boolean areCorrectAmountOfShipsPlaced(Set<Ship> ships) {
         final int AMOUNT_SUBMARINE        = GameConfig.ships.get(ShipType.SUBMARINE);
         final int AMOUNT_DESTROYER        = GameConfig.ships.get(ShipType.DESTROYER);
@@ -39,6 +48,15 @@ public final class ValidationService {
         );
     }
 
+
+    /**
+     * Checks if the ship is within bounds of the playfield
+     *
+     * @param ship  - The ship which gets checked
+     *
+     * @return If the ship is within bounds returns true, otherwise false
+     */
+
     public Boolean isShipPlacedEntirelyOnTheField(Ship ship) {
         final int x = ship.getCoordinates().getX();
         final int y = ship.getCoordinates().getY();
@@ -54,6 +72,15 @@ public final class ValidationService {
         }
     }
 
+
+    /**
+     * Checks if all ships are placed within bounds of the playfield
+     *
+     * @param ships - The ships which should be checked
+     *
+     * @return If the ships are within bounds returns true, otherwise false
+     */
+
     public Boolean areShipsPlacedEntirelyOnTheField(Set<Ship> ships) {
         for (Ship ship : ships) {
             if (!isShipPlacedEntirelyOnTheField(ship))
@@ -61,6 +88,32 @@ public final class ValidationService {
         }
         return true;
     }
+
+
+    /**
+     * Checks if the ship has no other ship within its collision zone
+     *
+     * @param ship  - The ship which checks for clearance collisions
+     * @param ships - All other ships placed on the field
+     *
+     * @return Returns if ship has a no clearance violation
+     */
+
+    public Boolean hasShipEnoughClearance(Ship ship, Set<Ship> ships) {
+        final Set<Coordinates> SHIP_CLEARANCE_COORDINATES = shipService.getClearanceCoordinatesForShip(ship);
+        final Set<Coordinates> OTHER_SHIPS_COORDINATES = ships.stream().map(shipService::getAllCoordinatesFromShip).flatMap(Collection::stream).collect(Collectors.toSet());
+
+        return Collections.disjoint(SHIP_CLEARANCE_COORDINATES, OTHER_SHIPS_COORDINATES);
+    }
+
+
+    /**
+     * Checks if the ships have no other ship within their collision zone
+     *
+     * @param ships - All ships who should be checked for clearance viiolations
+     *
+     * @return Returns if ships have no clearance violation
+     */
 
     public Boolean haveShipsEnoughClearance(Set<Ship> ships) {
         for (Ship ship : ships) {
@@ -73,12 +126,15 @@ public final class ValidationService {
         return true;
     }
 
-    public Boolean hasShipEnoughClearance(Ship ship, Set<Ship> ships) {
-        final Set<Coordinates> SHIP_CLEARANCE_COORDINATES = shipService.getClearanceCoordinatesForShip(ship);
-        final Set<Coordinates> OTHER_SHIPS_COORDINATES = ships.stream().map(shipService::getAllCoordinatesFromShip).flatMap(Collection::stream).collect(Collectors.toSet());
 
-        return Collections.disjoint(SHIP_CLEARANCE_COORDINATES, OTHER_SHIPS_COORDINATES);
-    }
+    /**
+     * Checks if the Ship with the current coordinates can be placed on the field without any violations
+     *
+     * @param ship  - The ship which wants to be placed
+     * @param ships - All other ships
+     *
+     * @return Returns if ship placement is valid
+     */
 
     public Boolean isShipPlacementValid(Ship ship, Set<Ship> ships) {
         if (!isShipPlacedEntirelyOnTheField(ship))
