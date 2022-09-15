@@ -13,13 +13,12 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class FieldService {
+public final class FieldService {
 
     private final ShipService shipService;
 
-
     /**
-     * Gets all the coordinates of every ships which is placed on the given field
+     * Gets all the coordinates of every ship which is placed on the given field
      *
      * @param field Field - The field which the ship coordinates should get extract from
      * @return Set<Coordinates> - The coordinates which are occupied by ships
@@ -39,15 +38,15 @@ public class FieldService {
      */
 
     public Set<Coordinates> getCoordinatesWithWater(Field field) {
-        Set<Coordinates> shipCoordinates = getCoordinatesWithShips(field);
-        Set<Coordinates> waterCoordinates = new HashSet<>();
+        final Set<Coordinates> SHIP_COORDINATES = getCoordinatesWithShips(field);
+        final Set<Coordinates> waterCoordinates = new HashSet<>();
 
-        for (int x = 1; x <= GameConfig.width; x++) {
-            for (int y = 1; y <= GameConfig.height; y++) {
+        for (int x = 1; x <= GameConfig.WIDTH; x++) {
+            for (int y = 1; y <= GameConfig.HEIGHT; y++) {
                 waterCoordinates.add(new Coordinates(x, y));
             }
         }
-        waterCoordinates.removeAll(shipCoordinates);
+        waterCoordinates.removeAll(SHIP_COORDINATES);
         return waterCoordinates;
     }
 

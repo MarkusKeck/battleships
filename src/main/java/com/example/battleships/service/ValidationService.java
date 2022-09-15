@@ -16,15 +16,15 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class ValidationService {
+public final class ValidationService {
 
     private final ShipService shipService;
 
     public Boolean areCorrectAmountOfShipsPlaced(Set<Ship> ships) {
-        final long AMOUNT_SUBMARINE        = GameConfig.ships.get(ShipType.SUBMARINE);
-        final long AMOUNT_DESTROYER        = GameConfig.ships.get(ShipType.DESTROYER);
-        final long AMOUNT_BATTLESHIP       = GameConfig.ships.get(ShipType.BATTLESHIP);
-        final long AMOUNT_AIRCRAFT_CARRIER = GameConfig.ships.get(ShipType.AIRCRAFT_CARRIER);
+        final int AMOUNT_SUBMARINE        = GameConfig.ships.get(ShipType.SUBMARINE);
+        final int AMOUNT_DESTROYER        = GameConfig.ships.get(ShipType.DESTROYER);
+        final int AMOUNT_BATTLESHIP       = GameConfig.ships.get(ShipType.BATTLESHIP);
+        final int AMOUNT_AIRCRAFT_CARRIER = GameConfig.ships.get(ShipType.AIRCRAFT_CARRIER);
 
         final long FIELD_SUBMARINE_COUNT        = ships.stream().filter(ship -> ship.getShipType().equals(ShipType.SUBMARINE)).count();
         final long FIELD_DESTROYER_COUNT        = ships.stream().filter(ship -> ship.getShipType().equals(ShipType.DESTROYER)).count();
@@ -32,10 +32,10 @@ public class ValidationService {
         final long FIELD_AIRCRAFT_CARRIER_COUNT = ships.stream().filter(ship -> ship.getShipType().equals(ShipType.AIRCRAFT_CARRIER)).count();
 
         return (
-                FIELD_SUBMARINE_COUNT == AMOUNT_SUBMARINE &&
-                        FIELD_DESTROYER_COUNT == AMOUNT_DESTROYER &&
-                        FIELD_BATTLESHIP_COUNT == AMOUNT_BATTLESHIP &&
-                        FIELD_AIRCRAFT_CARRIER_COUNT == AMOUNT_AIRCRAFT_CARRIER
+            FIELD_SUBMARINE_COUNT == AMOUNT_SUBMARINE &&
+            FIELD_DESTROYER_COUNT == AMOUNT_DESTROYER &&
+            FIELD_BATTLESHIP_COUNT == AMOUNT_BATTLESHIP &&
+            FIELD_AIRCRAFT_CARRIER_COUNT == AMOUNT_AIRCRAFT_CARRIER
         );
     }
 
@@ -44,13 +44,13 @@ public class ValidationService {
         final int y = ship.getCoordinates().getY();
         final int length = ship.getShipType().length;
 
-        if (x < 1 || x > GameConfig.width || y < 1 || y > GameConfig.height)
+        if (x < 1 || x > GameConfig.WIDTH || y < 1 || y > GameConfig.HEIGHT)
             return false;
 
         if (ship.getOrientation().equals(Orientation.HORIZONTAL)) {
-            return (x + length - 1) <= GameConfig.width;
+            return (x + length - 1) <= GameConfig.WIDTH;
         } else {
-            return (y + length - 1) <= GameConfig.height;
+            return (y + length - 1) <= GameConfig.HEIGHT;
         }
     }
 
@@ -64,7 +64,7 @@ public class ValidationService {
 
     public Boolean haveShipsEnoughClearance(Set<Ship> ships) {
         for (Ship ship : ships) {
-            Set<Ship> otherShips = new HashSet<>(ships);
+            final Set<Ship> otherShips = new HashSet<>(ships);
             otherShips.remove(ship);
 
             if (!hasShipEnoughClearance(ship, otherShips))
@@ -74,13 +74,10 @@ public class ValidationService {
     }
 
     public Boolean hasShipEnoughClearance(Ship ship, Set<Ship> ships) {
-        Set<Coordinates> clearanceCoordinates = shipService.getShipAndSurroundingCoordinates(ship);
-        Set<Coordinates> otherCoordinates = ships.stream().map(shipService::getAllCoordinatesFromShip).flatMap(Collection::stream).collect(Collectors.toSet());
+        final Set<Coordinates> SHIP_CLEARANCE_COORDINATES = shipService.getShipAndSurroundingCoordinates(ship);
+        final Set<Coordinates> OTHER_SHIPS_COORDINATES = ships.stream().map(shipService::getAllCoordinatesFromShip).flatMap(Collection::stream).collect(Collectors.toSet());
 
-        if (!Collections.disjoint(clearanceCoordinates, otherCoordinates))
-            return false;
-
-        return true;
+        return Collections.disjoint(SHIP_CLEARANCE_COORDINATES, OTHER_SHIPS_COORDINATES);
     }
 
     public Boolean isShipPlacementValid(Ship ship, Set<Ship> ships) {

@@ -13,7 +13,7 @@ import java.util.Set;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class Field {
+public final class Field {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

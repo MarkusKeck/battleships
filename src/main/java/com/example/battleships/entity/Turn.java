@@ -12,7 +12,7 @@ import javax.persistence.*;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class Turn {
+public final class Turn {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

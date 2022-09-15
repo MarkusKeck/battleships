@@ -5,9 +5,7 @@ import com.example.battleships.enumeration.Player;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 
@@ -17,7 +15,7 @@ import java.util.Set;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class Game {
+public final class Game {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,7 +31,7 @@ public class Game {
     private Set<Turn> turns = new HashSet<>();
 
     @Enumerated(value = EnumType.STRING)
-    private Difficulty difficulty = Difficulty.UNBEATABLE;
+    private Difficulty difficulty = Difficulty.VERY_EASY;
 
     @Enumerated(value = EnumType.STRING)
     private Player winner;

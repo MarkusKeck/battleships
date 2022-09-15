@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 
 @Getter
 @RequiredArgsConstructor
-public class ShipDto {
+public final class ShipDto {
 
     @NotNull
     private final Orientation orientation;

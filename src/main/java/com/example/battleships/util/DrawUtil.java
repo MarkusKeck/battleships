@@ -6,7 +6,7 @@ import com.example.battleships.entity.Game;
 import com.example.battleships.entity.Ship;
 import com.example.battleships.enumeration.Orientation;
 
-public class DrawUtil {
+public final class DrawUtil {
 
     /**
      * Draws the squares of the two players with all the corresponding ships.
@@ -17,9 +17,10 @@ public class DrawUtil {
 
     public static void drawFields(Game game) {
         System.out.println();
-        DrawUtil.drawField(game.getFieldPlayerOne());
+        drawField(game.getFieldPlayerOne());
+
         System.out.println();
-        DrawUtil.drawField(game.getFieldPlayerTwo());
+        drawField(game.getFieldPlayerTwo());
     }
 
 
@@ -34,11 +35,11 @@ public class DrawUtil {
         final String FIELD_EMPTY  = "□";
         final String FIELD_FILLED = "■";
 
-        String[][] ocean = new String[GameConfig.width + 1][GameConfig.height + 1];
+        String[][] ocean = new String[GameConfig.WIDTH + 1][GameConfig.HEIGHT + 1];
 
         // populate water
-        for (int x = 0; x <= GameConfig.width; x++) {
-            for (int y = 0; y <= GameConfig.height; y++) {
+        for (int x = 0; x <= GameConfig.WIDTH; x++) {
+            for (int y = 0; y <= GameConfig.HEIGHT; y++) {
                 ocean[x][y] = FIELD_EMPTY;
                 if (x == 0 || y == 0) // populate coordinates axes
                     ocean[x][y] = String.valueOf(x + y);
@@ -60,8 +61,8 @@ public class DrawUtil {
         }
 
         // draw
-        for (int y = 0; y <= GameConfig.height; y++) {
-            for (int x = 0; x <= GameConfig.width; x++)
+        for (int y = 0; y <= GameConfig.HEIGHT; y++) {
+            for (int x = 0; x <= GameConfig.WIDTH; x++)
                 System.out.printf("%1$3s", ocean[x][y]);
             System.out.println();
         }

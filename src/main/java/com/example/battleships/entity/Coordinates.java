@@ -11,7 +11,7 @@ import javax.persistence.Embeddable;
 @AllArgsConstructor
 @Embeddable
 @EqualsAndHashCode
-public class Coordinates {
+public final class Coordinates {
 
     private Integer x;
 

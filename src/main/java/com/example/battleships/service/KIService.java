@@ -18,21 +18,25 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class KIService {
+public final class KIService {
 
     private final FieldService fieldService;
     private final ValidationService validationService;
 
 
     public Set<Ship> placeShips() {
-        Set<Ship> ships = new HashSet<>();
+        final Set<Ship> ships = new HashSet<>();
         final int AMOUNT_SHIPS_TOTAL = GameConfig.ships.values().stream().mapToInt(Integer::intValue).sum();
 
         while (ships.size() < AMOUNT_SHIPS_TOTAL) {
-            ShipType shipType = this.getShipTypeToPlace(ships);
-            Orientation orientation = this.getRandomOrientation();
+            final ShipType    SHIP_TYPE   = this.getShipTypeToPlace(ships);
+            final Orientation ORIENTATION = this.getRandomOrientation();
 
-            ships.add(getValidPlacementForShip(new Ship(null, orientation, shipType, new Coordinates(), false), ships));
+            ships.add(
+                getValidPlacementForShip(
+                    new Ship(null, ORIENTATION, SHIP_TYPE, new Coordinates(), false), ships
+                )
+            );
         }
         return ships;
     }
@@ -64,9 +68,10 @@ public class KIService {
     }
 
     private Ship getValidPlacementForShip(Ship ship, Set<Ship> ships) {
+
         // calculate max x and y based on orientation
-        int maxX = GameConfig.width;
-        int maxY = GameConfig.height;
+        int maxX = GameConfig.WIDTH;
+        int maxY = GameConfig.HEIGHT;
 
         if (ship.getOrientation().equals(Orientation.HORIZONTAL)) {
             maxX -= ship.getShipType().length - 1;
@@ -75,20 +80,19 @@ public class KIService {
         }
 
         // find random position
-        int randX = new Random().nextInt(maxX) + 1;
-        int randY = new Random().nextInt(maxY) + 1;
+        final int RANDOM_X = new Random().nextInt(maxX) + 1;
+        final int RANDOM_Y = new Random().nextInt(maxY) + 1;
 
         // move ship until it found a valid position
         for (int ix = 0; ix < maxX; ix++) {
-            int x = ((randX + ix) % maxX) + 1;
+            final int X = ((RANDOM_X + ix) % maxX) + 1;
 
             for (int iy = 0; iy < maxY; iy++) {
-                int y = ((randY + iy) % maxY) + 1;
+                final int Y = ((RANDOM_Y + iy) % maxY) + 1;
 
-                ship.setCoordinates(new Coordinates(x, y));
-                if (validationService.isShipPlacementValid(ship, ships)) {
+                ship.setCoordinates(new Coordinates(X, Y));
+                if (validationService.isShipPlacementValid(ship, ships))
                     return ship;
-                }
             }
         }
         return null;
@@ -96,21 +100,24 @@ public class KIService {
 
 
     public Coordinates shoot(Game game) {
-        Set<Coordinates> shipCoordinates  = fieldService.getCoordinatesWithShips(game.getFieldPlayerOne());
-        Set<Coordinates> waterCoordinates = fieldService.getCoordinatesWithWater(game.getFieldPlayerOne());
+        final Set<Coordinates> SHIP_COORDINATES  = fieldService.getCoordinatesWithShips(game.getFieldPlayerOne());
+        final Set<Coordinates> WATER_COORDINATES = fieldService.getCoordinatesWithWater(game.getFieldPlayerOne());
 
-        Set<Coordinates> shotAt = getShotCoordinatesFromPlayerField(game, Player.PLAYER_ONE);
+        final Set<Coordinates> shotAt = getShotCoordinatesFromPlayerField(game, Player.PLAYER_ONE);
 
-        Set<Coordinates> unharmedShipCoordinates  = new HashSet<>(shipCoordinates);
-        Set<Coordinates> unharmedWaterCoordinates = new HashSet<>(waterCoordinates);
+        final Set<Coordinates> unharmedShipCoordinates  = new HashSet<>(SHIP_COORDINATES);
+        final Set<Coordinates> unharmedWaterCoordinates = new HashSet<>(WATER_COORDINATES);
 
         unharmedShipCoordinates.removeAll(shotAt);
         unharmedWaterCoordinates.removeAll(shotAt);
 
-        int accuracy = game.getDifficulty().accuracy;
-        int random = new Random().nextInt(100) + 1;
+        final int SUM_COORDINATES = GameConfig.WIDTH * GameConfig.HEIGHT;
 
-        if (random <= accuracy && unharmedShipCoordinates.size() > 0) {
+        final int ACCURACY = game.getDifficulty().accuracy;
+        final int RANDOM = new Random().nextInt(SUM_COORDINATES) + 1;
+
+        // shoot at ships if RANDOM <= ACCURACY and there are still ships to be shot at
+        if (RANDOM <= ACCURACY && unharmedShipCoordinates.size() > 0) {
             return unharmedShipCoordinates.stream().toList().get(new Random().nextInt(unharmedShipCoordinates.size()));
         } else {
             return unharmedWaterCoordinates.stream().toList().get(new Random().nextInt(unharmedWaterCoordinates.size()));

@@ -14,26 +14,26 @@ import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
-public class ShipService {
+public final class ShipService {
 
     public Set<Coordinates> getAllCoordinatesFromShip(Ship ship) {
-        Set<Coordinates> coordinates = new HashSet<>();
+        final Set<Coordinates> coordinates = new HashSet<>();
 
-        final int x = ship.getCoordinates().getX();
-        final int y = ship.getCoordinates().getY();
+        final int X = ship.getCoordinates().getX();
+        final int Y = ship.getCoordinates().getY();
 
         for (int length = 0; length < ship.getShipType().length; length++) {
             if (ship.getOrientation().equals(Orientation.HORIZONTAL)) {
-                coordinates.add(new Coordinates(x + length, y));
+                coordinates.add(new Coordinates(X + length, Y));
             } else {
-                coordinates.add(new Coordinates(x, y + length));
+                coordinates.add(new Coordinates(X, Y + length));
             }
         }
         return coordinates;
     }
 
     public Set<Coordinates> getShipAndSurroundingCoordinates(Ship ship) {
-        Set<Coordinates> surroundingCoordinates = new HashSet<>();
+        final Set<Coordinates> surroundingCoordinates = new HashSet<>();
 
         for (Coordinates shipCoordinate : this.getAllCoordinatesFromShip(ship)) {
             for (int x = -1; x <= 1; x++) {
@@ -46,10 +46,10 @@ public class ShipService {
     }
 
     public Ship getShipFromCoordinatesAndPlayer(Coordinates coordinates, Game game, Player player) {
-        Field field = player.equals(Player.PLAYER_ONE) ? game.getFieldPlayerOne() : game.getFieldPlayerTwo();
+        final Field FIELD = player.equals(Player.PLAYER_ONE) ? game.getFieldPlayerOne() : game.getFieldPlayerTwo();
 
-        for (Ship ship : field.getShips()) {
-            Set<Coordinates> shipCoordinates = getAllCoordinatesFromShip(ship);
+        for (Ship ship : FIELD.getShips()) {
+            final Set<Coordinates> shipCoordinates = getAllCoordinatesFromShip(ship);
 
             if (shipCoordinates.contains(coordinates))
                 return ship;

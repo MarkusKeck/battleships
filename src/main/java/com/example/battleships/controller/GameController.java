@@ -1,7 +1,8 @@
 package com.example.battleships.controller;
 
 import com.example.battleships.dto.ShipDto;
-import com.example.battleships.dto.TurnDto;
+import com.example.battleships.dto.CoordinatesDto;
+import com.example.battleships.entity.Coordinates;
 import com.example.battleships.entity.Game;
 import com.example.battleships.entity.Ship;
 import com.example.battleships.entity.Turn;
@@ -20,16 +21,17 @@ import java.util.Set;
 @RestController
 @RequestMapping("/game")
 @RequiredArgsConstructor
-public class GameController {
+public final class GameController {
 
     private final GameService gameService;
     private final ModelMapper modelMapper;
-
 
     @GetMapping
     public ResponseEntity<List<Game>> getAll() {
         return new ResponseEntity<>(gameService.getAllGames(), HttpStatus.OK);
     }
+
+
 
     @PostMapping
     public ResponseEntity<Game> create() {
@@ -45,8 +47,8 @@ public class GameController {
 
 
     @PutMapping("/{id}/shoot")
-    public ResponseEntity<Game> fire(@PathVariable("id") Long id, @Valid @RequestBody TurnDto turnDto) {
-        return new ResponseEntity<>(gameService.shoot(id, modelMapper.map(turnDto, Turn.class)), HttpStatus.OK);
+    public ResponseEntity<Game> fire(@PathVariable("id") Long id, @Valid @RequestBody CoordinatesDto coordinatesDto) {
+        return new ResponseEntity<>(gameService.shoot(id, modelMapper.map(coordinatesDto, Coordinates.class)), HttpStatus.OK);
     }
 
 }

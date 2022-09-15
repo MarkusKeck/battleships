@@ -13,7 +13,7 @@ import javax.persistence.*;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class Ship {
+public final class Ship {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,6 +27,6 @@ public class Ship {
 
     private Coordinates coordinates;
 
-    private Boolean sunk = false;
+    private Boolean isDestroyed = false;
 
 }

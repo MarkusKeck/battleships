@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class GameService {
+public final class GameService {
 
     private final GameRepository gameRepository;
 
@@ -46,6 +46,7 @@ public class GameService {
         return gameRepository.save(new Game());
     }
 
+
     /**
      * Places the ships on the given game in field one
      *
@@ -53,13 +54,14 @@ public class GameService {
      * @param ships - The ships which should be placed
      * @return      - The game which is now also populated with the ships
      */
+
     public Game placeShips(Long id, Set<Ship> ships) {
         if (
                 validationService.areCorrectAmountOfShipsPlaced(ships) &&
                 validationService.areShipsPlacedEntirelyOnTheField(ships) &&
                 validationService.haveShipsEnoughClearance(ships)
         ) {
-            Game game = gameRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(id.toString()));
+            final Game game = gameRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(id.toString()));
             game.getFieldPlayerOne().setShips(ships);
             game.getFieldPlayerTwo().setShips(kiService.placeShips());
 
@@ -74,71 +76,66 @@ public class GameService {
     /**
      * Lets the human player (always PLAYER_ONE) shoot at the ships of the bot (always PLAYER_TWO)
      *
-     * @param id    - The id of the currently played game
-     * @param turn  - The turn of the player with the given coordinates
-     * @return      - The current game object
+     * @param id          - The id of the currently played game
+     * @param coordinates - The coordinates where the player wants to shoot at
+     * @return            - The current game object
      */
 
-    public Game shoot(Long id, Turn turn) {
-        Game game = gameRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(id.toString()));
+    public Game shoot(Long id, Coordinates coordinates) {
+        final Game game = gameRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(id.toString()));
 
         // is game already over
         if (game.getWinner() != null)
             return null;
 
-        Coordinates shootAtCoordinates = turn.getCoordinates();
-
-        Player shootingPlayer   = getCurrentlyShootingPlayer(game);
-        Player shootingAtPlayer = shootingPlayer.equals(Player.PLAYER_ONE) ? Player.PLAYER_TWO : Player.PLAYER_ONE;
+        final Player SHOOTING_PLAYER    = getCurrentlyShootingPlayer(game);
+        final Player SHOOTING_AT_PLAYER = SHOOTING_PLAYER.equals(Player.PLAYER_ONE) ? Player.PLAYER_TWO : Player.PLAYER_ONE;
 
         // check if coordinates already got shot at
-        if (didCoordinatesAlreadyGotShotAt(shootAtCoordinates, game))
+        if (didCoordinatesAlreadyGotShotAt(coordinates, game))
             return null;
 
         // allow shooting - if hit get ship
-        Ship ship = shipService.getShipFromCoordinatesAndPlayer(shootAtCoordinates, game, shootingAtPlayer);
+        final Ship ship = shipService.getShipFromCoordinatesAndPlayer(coordinates, game, SHOOTING_AT_PLAYER);
 
-        turn.setPlayer(shootingPlayer);
-        turn.setTurn(game.getTurns().size() + 1);
-        turn.setHit(ship != null);
-
-        game.getTurns().add(turn);
+        final Turn HUMAN_TURN = new Turn(null, game.getTurns().size() + 1, SHOOTING_PLAYER, coordinates, ship != null);
+        game.getTurns().add(HUMAN_TURN);
 
         // additional checks if ship got hit
         if (ship != null) {
             if (isShipSinking(ship, game)) {
-                ship.setSunk(true);
+                ship.setIsDestroyed(true);
 
                 if (isGameWon(game))
-                    game.setWinner(shootingPlayer);
+                    game.setWinner(SHOOTING_PLAYER);
 
             }
             return gameRepository.save(game);
         }
 
         // missed - changing to ki
-        boolean kiShootAgain;
+        boolean hasKiHit;
         do {
-            Coordinates kiShootAt = kiService.shoot(game);
-            Ship kiShip = shipService.getShipFromCoordinatesAndPlayer(kiShootAt, game, Player.PLAYER_ONE);
+            final Coordinates KI_SHOOT_AT_COORDINATES = kiService.shoot(game);
+            Ship kiShip = shipService.getShipFromCoordinatesAndPlayer(KI_SHOOT_AT_COORDINATES, game, Player.PLAYER_ONE);
 
-            Turn kiTurn = new Turn(null, game.getTurns().size() + 1, Player.PLAYER_TWO, kiShootAt, kiShip != null);
-            game.getTurns().add(kiTurn);
+            final Turn KI_TURN = new Turn(null, game.getTurns().size() + 1, Player.PLAYER_TWO, KI_SHOOT_AT_COORDINATES, kiShip != null);
+            game.getTurns().add(KI_TURN);
 
             if (kiShip != null) {
                 if (isShipSinking(kiShip, game)) {
-                    kiShip.setSunk(true);
+                    kiShip.setIsDestroyed(true);
 
                     if (isGameWon(game)) {
                         game.setWinner(Player.PLAYER_TWO);
                         return gameRepository.save(game);
                     }
                 }
-                kiShootAgain = true;
+                hasKiHit = true;
             } else {
-                kiShootAgain = false;
+                hasKiHit = false;
             }
-        } while (kiShootAgain);
+        } while (hasKiHit);
         return gameRepository.save(game);
     }
 
@@ -151,18 +148,18 @@ public class GameService {
      */
 
     public Player getCurrentlyShootingPlayer(Game game) {
-        Turn lastTurn = game.getTurns().stream().filter(turn -> turn.getTurn().equals(game.getTurns().size())).findFirst().orElse(null);
+        final Turn LAST_TURN = game.getTurns().stream().filter(turn -> turn.getTurn().equals(game.getTurns().size())).findFirst().orElse(null);
 
         // no turns -> PLAYER_ONE begins
-        if (lastTurn == null)
+        if (LAST_TURN == null)
             return Player.PLAYER_ONE;
 
         // player of last turn hit a ship -> shoot again
-        if (lastTurn.getHit())
-            return lastTurn.getPlayer();
+        if (LAST_TURN.getHit())
+            return LAST_TURN.getPlayer();
 
         // last player missed -> switch players
-        return lastTurn.getPlayer().equals(Player.PLAYER_ONE) ? Player.PLAYER_TWO : Player.PLAYER_ONE;
+        return LAST_TURN.getPlayer().equals(Player.PLAYER_ONE) ? Player.PLAYER_TWO : Player.PLAYER_ONE;
     }
 
 
@@ -175,10 +172,10 @@ public class GameService {
      */
 
     public Boolean didCoordinatesAlreadyGotShotAt(Coordinates coordinates, Game game) {
-        Player shootingPlayer = getCurrentlyShootingPlayer(game);
-        Set<Coordinates> alreadyShotQuadrants = getCoordinatesPlayerAlreadyShotAt(shootingPlayer, game);
+        final Player SHOOTING_PLAYER = getCurrentlyShootingPlayer(game);
+        final Set<Coordinates> COORDINATES_PLAYER_ALREADY_SHOT_AT = getCoordinatesPlayerAlreadyShotAt(SHOOTING_PLAYER, game);
 
-        return alreadyShotQuadrants.contains(coordinates);
+        return COORDINATES_PLAYER_ALREADY_SHOT_AT.contains(coordinates);
     }
 
 
@@ -203,12 +200,12 @@ public class GameService {
      * @return     - Is the ship sinking
      */
     public Boolean isShipSinking(Ship ship, Game game) {
-        Player shootingPlayer = getCurrentlyShootingPlayer(game);
+        final Player SHOOTING_PLAYER = getCurrentlyShootingPlayer(game);
 
-        Set<Coordinates> allCoordinatesOfShip = shipService.getAllCoordinatesFromShip(ship);
-        Set<Coordinates> playerShotAtCoordinates = getCoordinatesPlayerAlreadyShotAt(shootingPlayer, game);
+        final Set<Coordinates> ALL_COORDINATES_OF_SHIP = shipService.getAllCoordinatesFromShip(ship);
+        final Set<Coordinates> COORDINATES_PLAYER_ALREADY_SHOT_AT = getCoordinatesPlayerAlreadyShotAt(SHOOTING_PLAYER, game);
 
-        return playerShotAtCoordinates.containsAll(allCoordinatesOfShip);
+        return COORDINATES_PLAYER_ALREADY_SHOT_AT.containsAll(ALL_COORDINATES_OF_SHIP);
     }
 
 
@@ -220,11 +217,11 @@ public class GameService {
      */
 
     public Boolean isGameWon(Game game) {
-        final Player shootingPlayer = getCurrentlyShootingPlayer(game);
-        final Field fieldWhichGetsShotAt = shootingPlayer.equals(Player.PLAYER_ONE) ? game.getFieldPlayerTwo() : game.getFieldPlayerOne();
+        final Player SHOOTING_PLAYER = getCurrentlyShootingPlayer(game);
+        final Field SHOOT_AT_FIELD = SHOOTING_PLAYER.equals(Player.PLAYER_ONE) ? game.getFieldPlayerTwo() : game.getFieldPlayerOne();
 
-        for (Ship ship : fieldWhichGetsShotAt.getShips()) {
-            if (!ship.getSunk())
+        for (Ship ship : SHOOT_AT_FIELD.getShips()) {
+            if (!ship.getIsDestroyed())
                 return false;
         }
         return true;
