@@ -20,8 +20,9 @@ public final class FieldService {
     /**
      * Gets all the coordinates of every ship which is placed on the given field
      *
-     * @param field Field - The field which the ship coordinates should get extract from
-     * @return Set<Coordinates> - The coordinates which are occupied by ships
+     * @param field - The field which the ship coordinates should get extract from
+     *
+     * @return  The coordinates which are occupied by ships
      */
 
     public Set<Coordinates> getCoordinatesWithShips(Field field) {
@@ -34,7 +35,8 @@ public final class FieldService {
      * This is the inverse function of getCoordinatesWithShip()
      *
      * @param field Field - The field which should be searched for water quadrants
-     * @return Set<Coordinates> - The coordinates which are occupied by water
+     *
+     * @return The coordinates which are occupied by water
      */
 
     public Set<Coordinates> getCoordinatesWithWater(Field field) {

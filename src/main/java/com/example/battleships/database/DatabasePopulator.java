@@ -6,11 +6,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public final class Populator implements CommandLineRunner {
+public final class DatabasePopulator implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        // empty
+        // The DatabasePopulator seems not to be that popular
     }
 
 }

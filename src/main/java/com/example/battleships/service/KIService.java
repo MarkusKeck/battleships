@@ -24,6 +24,12 @@ public final class KIService {
     private final ValidationService validationService;
 
 
+    /**
+     * The KI places its ships to be later populated on the field
+     *
+     * @return The set of the ships
+     */
+
     public Set<Ship> placeShips() {
         final Set<Ship> ships = new HashSet<>();
         final int AMOUNT_SHIPS_TOTAL = GameConfig.ships.values().stream().mapToInt(Integer::intValue).sum();
@@ -42,7 +48,15 @@ public final class KIService {
     }
 
 
-    // ship placement order: AIRCRAFT_CARRIER -> BATTLESHIP -> DESTROYER -> SUBMARINE
+    /**
+     * Decides which ship should be placed next
+     * AIRCRAFT_CARRIER -> BATTLESHIP -> DESTROYER -> SUBMARINE
+     *
+     * @param ships - The current set of ships
+     *
+     * @return The ShipType which should be placed next
+     */
+
     private ShipType getShipTypeToPlace(Set<Ship> ships) {
         final int AMOUNT_DESTROYER        = GameConfig.ships.get(ShipType.DESTROYER);
         final int AMOUNT_BATTLESHIP       = GameConfig.ships.get(ShipType.BATTLESHIP);
@@ -63,9 +77,26 @@ public final class KIService {
         }
     }
 
+
+    /**
+     * Get a random orientation for the ship
+     *
+     * @return The random orientation
+     */
+
     private Orientation getRandomOrientation() {
         return Orientation.values()[new Random().nextInt(Orientation.values().length)];
     }
+
+
+    /**
+     * Finds a valid placement for the given ship and avoids collision with other ships
+     *
+     * @param ship  - The ship which should be placed
+     * @param ships - The other ships which are already planned for placement
+     *
+     * @return The given ship stored with the new valid coordinates
+     */
 
     private Ship getValidPlacementForShip(Ship ship, Set<Ship> ships) {
 
@@ -99,11 +130,20 @@ public final class KIService {
     }
 
 
+    /**
+     * The KI shoots at the enemy field based on the set difficulty according to its accuracy
+     * It only shoots at valid coordinates
+     *
+     * @param game  - The game which is beeing played
+     *
+     * @return The coordinates which the ki decided to shoot at
+     */
+
     public Coordinates shoot(Game game) {
         final Set<Coordinates> SHIP_COORDINATES  = fieldService.getCoordinatesWithShips(game.getFieldPlayerOne());
         final Set<Coordinates> WATER_COORDINATES = fieldService.getCoordinatesWithWater(game.getFieldPlayerOne());
 
-        final Set<Coordinates> shotAt = getShotCoordinatesFromPlayerField(game, Player.PLAYER_ONE);
+        final Set<Coordinates> shotAt = getAllShotCoordinatesByPlayer(game, Player.PLAYER_TWO);
 
         final Set<Coordinates> unharmedShipCoordinates  = new HashSet<>(SHIP_COORDINATES);
         final Set<Coordinates> unharmedWaterCoordinates = new HashSet<>(WATER_COORDINATES);
@@ -124,8 +164,18 @@ public final class KIService {
         }
     }
 
-    public Set<Coordinates> getShotCoordinatesFromPlayerField(Game game, Player player) {
-        return game.getTurns().stream().filter(turn -> !turn.getPlayer().equals(player)).map(Turn::getCoordinates).collect(Collectors.toSet());
+
+    /**
+     * Gets all coordinates the given player already shot at
+     *
+     * @param game      - The game which is currently played
+     * @param player    - The player which shots should be collected
+     *
+     * @return The coordinates the player already shot at
+     */
+
+    public Set<Coordinates> getAllShotCoordinatesByPlayer(Game game, Player player) {
+        return game.getTurns().stream().filter(turn -> turn.getPlayer().equals(player)).map(Turn::getCoordinates).collect(Collectors.toSet());
     }
 
 }

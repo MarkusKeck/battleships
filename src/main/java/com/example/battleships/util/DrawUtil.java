@@ -35,7 +35,7 @@ public final class DrawUtil {
         final String FIELD_EMPTY  = "□";
         final String FIELD_FILLED = "■";
 
-        String[][] ocean = new String[GameConfig.WIDTH + 1][GameConfig.HEIGHT + 1];
+        final String[][] ocean = new String[GameConfig.WIDTH + 1][GameConfig.HEIGHT + 1];
 
         // populate water
         for (int x = 0; x <= GameConfig.WIDTH; x++) {

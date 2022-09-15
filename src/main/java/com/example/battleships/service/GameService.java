@@ -28,7 +28,7 @@ public final class GameService {
     /**
      * Searches for all Game objects inside the Game repository
      *
-     * @return all persisted Game objects
+     * @return All persisted Game objects
      */
 
     public List<Game> getAllGames() {
@@ -39,7 +39,7 @@ public final class GameService {
     /**
      * Creates a new Game object and saves it to the Game repository
      *
-     * @return the persisted Game object with all initialized attributes
+     * @return The persisted Game object with all initialized attributes
      */
 
     public Game createGame() {
@@ -52,7 +52,8 @@ public final class GameService {
      *
      * @param id    - The id of the game
      * @param ships - The ships which should be placed
-     * @return      - The game which is now also populated with the ships
+     *
+     * @return The game which is now also populated with the ships
      */
 
     public Game placeShips(Long id, Set<Ship> ships) {
@@ -78,7 +79,8 @@ public final class GameService {
      *
      * @param id          - The id of the currently played game
      * @param coordinates - The coordinates where the player wants to shoot at
-     * @return            - The current game object
+     *
+     * @return The current game object
      */
 
     public Game shoot(Long id, Coordinates coordinates) {
@@ -108,7 +110,6 @@ public final class GameService {
 
                 if (isGameWon(game))
                     game.setWinner(SHOOTING_PLAYER);
-
             }
             return gameRepository.save(game);
         }
@@ -144,7 +145,8 @@ public final class GameService {
      * Decides based on the turns played in the game who is allowed to make the next move
      *
      * @param game - The game which is played at the moment
-     * @return     - The Player who is allowed to move next
+     *
+     * @return The Player who is allowed to move next
      */
 
     public Player getCurrentlyShootingPlayer(Game game) {
@@ -168,7 +170,8 @@ public final class GameService {
      *
      * @param coordinates - The coordinates which the player is shooting at
      * @param game        - The current game
-     * @return            - Coordinates already got shot at
+     *
+     * @return Coordinates already got shot at
      */
 
     public Boolean didCoordinatesAlreadyGotShotAt(Coordinates coordinates, Game game) {
@@ -184,7 +187,8 @@ public final class GameService {
      *
      * @param player - The shooting player
      * @param game   - The current game
-     * @return       - The coordinates which were shot at
+     *
+     * @return The coordinates which were shot at
      */
 
     public Set<Coordinates> getCoordinatesPlayerAlreadyShotAt(Player player, Game game) {
@@ -197,7 +201,8 @@ public final class GameService {
      *
      * @param ship - The ship which should get checked
      * @param game - The current game
-     * @return     - Is the ship sinking
+     *
+     * @return Is the ship sinking
      */
     public Boolean isShipSinking(Ship ship, Game game) {
         final Player SHOOTING_PLAYER = getCurrentlyShootingPlayer(game);
@@ -213,7 +218,8 @@ public final class GameService {
      * Checks if the game is won
      *
      * @param game - The current game
-     * @return     - Is the game won
+     *
+     * @return Is the game won
      */
 
     public Boolean isGameWon(Game game) {
