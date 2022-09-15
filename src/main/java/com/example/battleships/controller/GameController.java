@@ -1,6 +1,7 @@
 package com.example.battleships.controller;
 
 import com.example.battleships.dto.CoordinatesDto;
+import com.example.battleships.dto.GameDto;
 import com.example.battleships.dto.ShipDto;
 import com.example.battleships.entity.Coordinates;
 import com.example.battleships.entity.Game;
@@ -44,8 +45,8 @@ public final class GameController {
      */
 
     @PostMapping
-    public ResponseEntity<Game> create() {
-        return new ResponseEntity<>(gameService.createGame(), HttpStatus.CREATED);
+    public ResponseEntity<Game> create(@Valid @RequestBody GameDto gameDto) {
+        return new ResponseEntity<>(gameService.createGame(modelMapper.map(gameDto, Game.class)), HttpStatus.CREATED);
     }
 
 
@@ -60,7 +61,7 @@ public final class GameController {
 
     @PutMapping("/{id}/placeShips")
     public ResponseEntity<Game> placeShips(@PathVariable("id") Long id, @Valid @RequestBody Set<ShipDto> shipDtoCreateSet) {
-        Set<Ship> ships = modelMapper.map(shipDtoCreateSet, new TypeToken<Set<Ship>>() {}.getType());
+        final Set<Ship> ships = modelMapper.map(shipDtoCreateSet, new TypeToken<Set<Ship>>() {}.getType());
         return new ResponseEntity<>(gameService.placeShips(id, ships), HttpStatus.OK);
     }
 

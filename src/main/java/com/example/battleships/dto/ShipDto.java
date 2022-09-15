@@ -4,22 +4,22 @@ import com.example.battleships.entity.Coordinates;
 import com.example.battleships.enumeration.Orientation;
 import com.example.battleships.enumeration.ShipType;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
 
 
 @Getter
-@RequiredArgsConstructor
+@NoArgsConstructor
 public final class ShipDto {
 
     @NotNull
-    private final Orientation orientation;
+    private Orientation orientation;
 
     @NotNull
-    private final ShipType shipType;
+    private ShipType shipType;
 
     @NotNull
-    private final Coordinates coordinates;
+    private Coordinates coordinates;
 
 }

@@ -1,24 +1,24 @@
 package com.example.battleships.dto;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 @Getter
-@RequiredArgsConstructor
+@NoArgsConstructor
 public final class CoordinatesDto {
 
     @NotNull
     @Min(value = 1, message = "lowest possible x value is 1")
     @Max(value = 10, message = "highest possible x value is {GameConfig.WIDTH}")
-    private final Integer x;
+    private Integer x;
 
     @NotNull
     @Min(value = 1, message = "lowest possible y value is 1")
     @Max(value = 10, message = "highest possible y value is {GameConfig.HEIGHT}")
-    private final Integer y;
+    private Integer y;
 
 }

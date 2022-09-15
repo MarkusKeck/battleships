@@ -42,8 +42,8 @@ public final class GameService {
      * @return The persisted Game object with all initialized attributes
      */
 
-    public Game createGame() {
-        return gameRepository.save(new Game());
+    public Game createGame(Game game) {
+        return gameRepository.save(game);
     }
 
 
