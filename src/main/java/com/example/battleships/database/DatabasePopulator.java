@@ -12,6 +12,7 @@ public final class DatabasePopulator implements CommandLineRunner {
     @Value("${battleship.eigene-property}")
     private String meineEigeneProperty;
 
+
     @Override
     public void run(String... args) {
 

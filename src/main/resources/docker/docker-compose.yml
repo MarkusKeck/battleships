@@ -16,16 +16,35 @@ services:
 
   # battleships-db-test
   battleships-db-mysql:
-      image: mysql:latest
-      container_name: battleships-db-mysql
-      command: --default-authentication-plugin=mysql_native_password
-      ports:
-        - 5306:3306
-      restart: always
-      environment:
-        TZ: Europe/Berlin
-        MYSQL_ROOT_USER: root
-        MYSQL_ROOT_PASSWORD: rootpassword
-        MYSQL_DATABASE: battleships
-        MYSQL_USER: battleships
-        MYSQL_PASSWORD: battleships
+    image: mysql:latest
+    container_name: battleships-db-mysql
+    command: --default-authentication-plugin=mysql_native_password
+    ports:
+      - 5306:3306
+    environment:
+      TZ: Europe/Berlin
+      MYSQL_ROOT_USER: root
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: battleships
+      MYSQL_USER: battleships
+      MYSQL_PASSWORD: battleships
+    restart: always
+
+  # battleships-api
+  battleships-api:
+    image: battleships-api
+    container_name: battleships-api
+    ports:
+      - 8080:8080
+    environment:
+      TZ: Europe/Berlin
+      SPRING_PROFILES_ACTIVE: production
+    depends_on:
+      - battleships-db-postgres
+      - battleships-db-mysql
+    restart: always
+
+networks:
+  default:
+    external:
+      name: battleships-network
