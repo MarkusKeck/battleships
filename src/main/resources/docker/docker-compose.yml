@@ -1,0 +1,31 @@
+version: "3.7"
+services:
+
+  # battleships-db-public
+  battleships-db-postgres:
+    image: postgres:latest
+    container_name: battleships-db-postgres
+    ports:
+      - 5532:5432
+    environment:
+      TZ: Europe/Berlin
+      POSTGRES_USER: battleships
+      POSTGRES_PASSWORD: 3WzP7462Ek4b
+      POSTGRES_DB: battleships
+    restart: always
+
+  # battleships-db-test
+  battleships-db-mysql:
+      image: mysql:latest
+      container_name: battleships-db-mysql
+      command: --default-authentication-plugin=mysql_native_password
+      ports:
+        - 5306:3306
+      restart: always
+      environment:
+        TZ: Europe/Berlin
+        MYSQL_ROOT_USER: root
+        MYSQL_ROOT_PASSWORD: rootpassword
+        MYSQL_DATABASE: battleships
+        MYSQL_USER: battleships
+        MYSQL_PASSWORD: battleships
