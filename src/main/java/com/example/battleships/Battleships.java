@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class SchiffeVersenkenApplication {
+public class Battleships {
 
     public static void main(String[] args) {
-        SpringApplication.run(SchiffeVersenkenApplication.class, args);
+        SpringApplication.run(Battleships.class, args);
     }
 
 }

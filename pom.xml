@@ -84,7 +84,7 @@
                 <version>1.2.0</version>
                 <configuration>
                     <imageName>battleships</imageName>
-                    <baseImage>openjdk:19-jdk-alpine</baseImage>
+                    <baseImage>openjdk:19</baseImage>
                     <entryPoint>["java", "-jar", "/${project.build.finalName}.jar"]</entryPoint>
                     <resources>
                         <resource>
