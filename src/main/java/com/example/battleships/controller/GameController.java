@@ -2,7 +2,7 @@ package com.example.battleships.controller;
 
 import com.example.battleships.dto.CoordinatesDto;
 import com.example.battleships.dto.GameDto;
-import com.example.battleships.dto.ShipDto;
+import com.example.battleships.dto.ShipsDto;
 import com.example.battleships.entity.Coordinates;
 import com.example.battleships.entity.Game;
 import com.example.battleships.entity.Ship;
@@ -18,6 +18,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Set;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/game")
 @RequiredArgsConstructor
@@ -54,14 +55,14 @@ public final class GameController {
      * Place the ships of a player
      *
      * @param id                - The id of the game
-     * @param shipDtoCreateSet  - The set of ships which the player wants to place
+     * @param shipsDto          - The set of ships which the player wants to place
      *
      * @return The updated game
      */
 
     @PutMapping("/{id}/placeShips")
-    public ResponseEntity<Game> placeShips(@PathVariable("id") Long id, @Valid @RequestBody Set<ShipDto> shipDtoCreateSet) {
-        final Set<Ship> ships = modelMapper.map(shipDtoCreateSet, new TypeToken<Set<Ship>>() {}.getType());
+    public ResponseEntity<Game> placeShips(@PathVariable("id") Long id, @Valid @RequestBody ShipsDto shipsDto) {
+        final Set<Ship> ships = modelMapper.map(shipsDto.getShips(), new TypeToken<Set<Ship>>() {}.getType());
         return new ResponseEntity<>(gameService.placeShips(id, ships), HttpStatus.OK);
     }
 
